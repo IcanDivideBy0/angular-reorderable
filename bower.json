@@ -1,0 +1,32 @@
+{
+  "name": "angular-reorderable",
+  "version": "0.0.0",
+  "authors": [
+    "Samuel Hurel <samuel.hurel@gmail.com>"
+  ],
+  "description": "Re-order your collection over ng-repeat",
+  "main": "src/angular-reorderable.js",
+  "keywords": [
+    "AngularJS",
+    "ngRepeat",
+    "ng-repeat",
+    "reorderable",
+    "sort"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.3.1",
+    "lodash": "~2.4.1",
+    "jquery": "~2.1.1"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.3.1"
+  }
+}
