@@ -6,12 +6,14 @@ bower install --save angular-reorderable
 
 #### Usage
 
+Reordering items in `$scope.collection` based on `item.rank` proterty:
+
 ```html
-<ul class="list-group">
-  <li ng-repeat="person in persons as coll" reorderable="rank" reorderable-handle class="list-group-item">
-    <img class="img-circle" ng-src="{{person.picture.thumbnail}}" />
-    {{person.name.first}} {{person.name.last}}
-  </li>
+<ul>
+  <li
+   ng-repeat="item in collection"
+   reorderable="rank"
+   reorderable-handle> [...] </li>
 </ul>
 ```
 
