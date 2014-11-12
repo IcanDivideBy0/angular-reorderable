@@ -1,3 +1,5 @@
+![travis status](https://travis-ci.org/IcanDivideBy0/angular-reorderable.svg?branch=master)
+
 #### Install
     
 ```sh
