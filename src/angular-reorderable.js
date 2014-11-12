@@ -1,3 +1,4 @@
+'use strict';
 
 angular
 .module('angularReorderable', [])
@@ -11,6 +12,8 @@ angular
     $scope.$watchCollection(_.bind(function () {
       return _.pluck(this.collection, this.sortKey);
     }, this), _.bind(function () {
+      if (!_.isArray(this.collection)) return;
+
       var sortedCollection = _.sortBy(this.collection, this.sortKey);
       this.collection.length = 0;
       this.collection.push.apply(this.collection, sortedCollection);
@@ -38,8 +41,7 @@ angular
   }
 ])
 .directive('reorderable', [
-  '$parse',
-  function ($parse) {
+  function () {
     return {
       restrict: 'A',
       controller: 'ReorderableCtrl',
@@ -64,8 +66,11 @@ angular
         return function reorderableLink($scope, $element, $attr, ctrl) {
           // Setup controller values.
           ctrl.valueIdentifier = valueIdentifier;
-          ctrl.collection = $parse(rhs)($scope);
           ctrl.sortKey = $attr.reorderable;
+
+          $scope.$watch(rhs, function (collection) {
+            ctrl.collection = collection;
+          });
         };
       }
     };
@@ -73,8 +78,7 @@ angular
 ])
 .directive('reorderableHandle', [
   '$document',
-  '$rootScope',
-  function ($document, $rootScope) {
+  function ($document) {
     return {
       restrict: 'A',
       require: '^reorderable',
@@ -96,10 +100,10 @@ angular
           itemElement.css({ zIndex: 10 });
 
           // Start dragging.
-          startX = event.clientX;
           startY = event.clientY;
-          elementX = itemElement.get(0).getBoundingClientRect().left;
+          startX = event.clientX;
           elementY = itemElement.get(0).getBoundingClientRect().top;
+          elementX = itemElement.get(0).getBoundingClientRect().left;
 
           // Set mouse events handlers.
           $document.on('mousemove', mousemove);
@@ -118,10 +122,13 @@ angular
 
             itemElement.css({ top: '', left: '' });
 
-            startX += itemElement.get(0).getBoundingClientRect().left - elementX;
-            startY += itemElement.get(0).getBoundingClientRect().top - elementY;
-            elementX = itemElement.get(0).getBoundingClientRect().left;
-            elementY = itemElement.get(0).getBoundingClientRect().top;
+            var top = itemElement.get(0).getBoundingClientRect().top;
+            var left = itemElement.get(0).getBoundingClientRect().left;
+
+            startY += top - elementY;
+            startX += left - elementX;
+            elementY = top;
+            elementX = left;
           }
 
           itemElement.css({

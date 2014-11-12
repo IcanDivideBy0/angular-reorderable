@@ -26,7 +26,7 @@ describe('angular reorderable', function () {
         rank: 1
       }
     ];
-  }))
+  }));
 
   describe('Reorderable controller', function () {
     var createController;
@@ -49,7 +49,7 @@ describe('angular reorderable', function () {
     }));
 
     it('should sort collection', function () {
-      var controller = createController();
+      createController();
 
       expect(scope.collection[0].name).to.equals('Qux');
       expect(scope.collection[1].name).to.equals('Baz');
@@ -105,28 +105,86 @@ describe('angular reorderable', function () {
       };
     }));
 
-    describe('#compile', function () {
-      it('should throw an exception if ng-repeat is not present on element', function () {
-        template = '<div><div reorderable="rank"></div><div>';
+    it('should throw an exception if ng-repeat is not present on element', function () {
+      template =
+        '<ul>' +
+        '  <li reorderable="rank"></li>' +
+        '</ul>';
 
-        expect(createElement).to.throw('Reorderable error: ngRepeat is not present on element.');
-      });
-
-      // ngRepeat format is already tested by AngularJS, if the syntax evolve,
-      // it should be reported in the module, but there is no way to test it
-      // properly here.
+      expect(createElement).to.throw('Reorderable error: ngRepeat is not present on element.');
     });
 
-    describe('#link', function () {
-      it('should pass values to controller', function () {
-        template = '<div><div ng-repeat="item in collection" reorderable="rank"></div><div>';
-        var element = createElement();
-        // How to get controller from a non existing DOM element ?
-      });
-    })
+    // ngRepeat format is already tested by AngularJS, if the syntax evolve,
+    // it should be reported in the module, but there is no way to test it
+    // properly here.
   });
 
   describe('Reorderable handle directive', function () {
-    xit('TODO');
+    var template, createElement;
+
+    beforeEach(inject(function ($compile, $document) {
+      createElement = function () {
+        var element = $compile(template)(scope);
+
+        // We need the element to be in a document to get him well positioned.
+        $document.get(0).body.appendChild(element.get(0));
+
+        scope.$digest();
+        return element;
+      };
+    }));
+
+    it('should set items elements positions', function () {
+      template =
+        '<ul>' +
+        '  <li ng-repeat="item in collection" reorderable="rank">' +
+        '    <span reorderable-handle ng-bind="item.name"></span>' +
+        '  </li>' +
+        '</ul>';
+      var element = createElement();
+
+      expect(element.find('[reorderable]')).to.have.css('position', 'relative');
+    });
+
+    it('should allow to move item forward', inject(function ($document) {
+      template =
+        '<ul>' +
+        '  <li' +
+        '   ng-repeat="item in collection"' +
+        '   reorderable="rank"' +
+        '   reorderable-handle' +
+        '   ng-bind="item.name"></li>' +
+        '</ul>';
+      var element = createElement();
+
+      var dragElement = element.find('[reorderable-handle]:eq(0)');
+      var dropElement = element.find('[reorderable]:eq(2)');
+
+      // Click first element.
+      dragElement.trigger(jQuery.Event('mousedown', {
+        clientX: dragElement.get(0).getBoundingClientRect().left,
+        clientY: dragElement.get(0).getBoundingClientRect().top
+      }));
+
+      // Move mouse to third element.
+      $document.trigger(jQuery.Event('mousemove', {
+        clientX: dropElement.get(0).getBoundingClientRect().left,
+        clientY: dropElement.get(0).getBoundingClientRect().top
+      }));
+      scope.$digest();
+
+      // Release mouse button (not really needed, but whatever).
+      $document.trigger('mouseup');
+
+      expect(element.find('[reorderable]:eq(0)')).to.have.text('Baz');
+      expect(element.find('[reorderable]:eq(1)')).to.have.text('Bar');
+      expect(element.find('[reorderable]:eq(2)')).to.have.text('Qux');
+      expect(element.find('[reorderable]:eq(3)')).to.have.text('Foo');
+
+      expect(scope.collection[0].name).eql('Baz');
+      expect(scope.collection[1].name).eql('Bar');
+      expect(scope.collection[2].name).eql('Qux');
+      expect(scope.collection[3].name).eql('Foo');
+    }));
   });
 });

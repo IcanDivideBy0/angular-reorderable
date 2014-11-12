@@ -39,3 +39,20 @@ gulp.task('test:watch', function () {
     action: 'watch'
   }));
 });
+
+/**
+ * Lint JS files.
+ */
+
+gulp.task('lint', function() {
+  var jshint = require('gulp-jshint');
+
+  return gulp.src([
+    './gulpfile.js',
+    './src/**/*.js',
+    './test/**/*.js'
+  ])
+  .pipe(jshint())
+  .pipe(jshint.reporter('jshint-stylish'))
+  .pipe(jshint.reporter('fail'));
+});

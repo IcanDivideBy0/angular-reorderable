@@ -1,5 +1,7 @@
 <html>
   <head>
+    <meta charset="utf-8">
+
     <script src="../bower_components/jquery/dist/jquery.js"></script>
     <script src="../bower_components/lodash/dist/lodash.js"></script>
     <script src="../bower_components/angular/angular.js"></script>
@@ -8,12 +10,14 @@
     <title>Angular re-orderable example</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 
     <style>
       [reorderable-handle] {
         cursor: pointer;
+      }
+
+      img {
+        height: 1.5em;
       }
     </style>
   </head>
@@ -22,12 +26,11 @@
 
     <div ng-controller="ExampleCtrl">
       <ul class="list-group">
-        <li ng-repeat="item in myCollection as coll" reorderable="rank" class="list-group-item" reorderable-handle>
-          {{item.title}}
+        <li ng-repeat="person in persons as coll" reorderable="rank" reorderable-handle class="list-group-item">
+          <img class="img-circle" ng-src="{{person.picture.thumbnail}}" />
+          {{person.name.first}} {{person.name.last}}
         </li>
       </ul>
-
-      <pre>{{myCollection | json}}</pre>
     </div>
 
     <script>
@@ -37,25 +40,24 @@
       ])
       .controller('ExampleCtrl', [
         '$scope',
-        function ($scope) {
-          this.foo = 'bar';
-
-          $scope.myCollection = [
-            {
-              title: 'foo',
-              rank: 3
-            },
-            {
-              title: 'bar',
-              rank: 1
-            },
-            {
-              title: 'joe',
-              rank: 2
+        '$http',
+        function ($scope, $http) {
+          // Get some dummy persons.
+          $http({
+            method: 'GET',
+            url: 'http://api.randomuser.me/',
+            params: {
+              results: 10
             }
-          ];
-
-          $scope.myCollection2 = $scope.myCollection.slice(0);
+          })
+          .then(function (result) {
+            $scope.persons = _.chain(result.data.results)
+            .map(function (result, index) {
+              result.user.rank = index;
+              return result.user;
+            })
+            .value();
+          });
         }
       ]);
     </script>
