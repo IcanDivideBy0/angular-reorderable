@@ -1,7 +1,7 @@
 #### Install
     
 ```sh
-bower install angular-reorderable
+bower install --save angular-reorderable
 ```
 
 #### Usage
