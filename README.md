@@ -1,4 +1,4 @@
-![travis status](https://travis-ci.org/IcanDivideBy0/angular-reorderable.svg?branch=master)
+[![Build Status](https://travis-ci.org/IcanDivideBy0/angular-reorderable.svg?branch=master)](https://travis-ci.org/IcanDivideBy0/angular-reorderable)
 
 #### Install
     
