@@ -13,7 +13,7 @@ module.exports = function (config) {
       'karma-firefox-launcher',
       'karma-phantomjs-launcher'
     ],
-    frameworks: ['mocha', 'sinon-chai', 'chai-jquery', 'chai', 'jquery-2.1.0'],
+    frameworks: ['mocha', 'chai-jquery', 'chai', 'jquery-1.8.3', 'sinon-chai'],
     basePath: '.',
     colors: true,
     reporters: ['spec'],
