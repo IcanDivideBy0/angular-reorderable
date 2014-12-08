@@ -186,5 +186,42 @@ describe('angular reorderable', function () {
       expect(scope.collection[2].name).eql('Qux');
       expect(scope.collection[3].name).eql('Foo');
     }));
+
+    it('should not trigger click event after reordering', inject(function ($document) {
+      scope.clickSpy = sinon.spy();
+
+      template =
+        '<ul>' +
+        '  <li' +
+        '   ng-repeat="item in collection"' +
+        '   reorderable="rank"' +
+        '   reorderable-handle' +
+        '   ng-bind="item.name"' +
+        '   ng-click="clickSpy()"></li>' +
+        '</ul>';
+      var element = createElement();
+
+      var dragElement = element.find('[reorderable-handle]:eq(0)');
+
+      // Click first element.
+      dragElement.trigger(jQuery.Event('mousedown', {
+        clientX: dragElement.get(0).getBoundingClientRect().left,
+        clientY: dragElement.get(0).getBoundingClientRect().top
+      }));
+
+      // Move mouse to third element.
+      $document.trigger(jQuery.Event('mousemove', {
+        clientX: dragElement.get(0).getBoundingClientRect().left + 10,
+        clientY: dragElement.get(0).getBoundingClientRect().top + 10
+      }));
+
+      // Release mouse button (not really needed, but whatever).
+      $document.trigger('mouseup');
+
+      // Click event if fired right after mouseup event.
+      dragElement.trigger('click');
+
+      expect(scope.clickSpy).to.not.have.been.called;
+    }));
   });
 });
