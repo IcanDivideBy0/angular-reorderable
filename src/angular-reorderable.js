@@ -85,6 +85,7 @@ angular
       link: function reorderableHandle(scope, element, attr, ReorderableCtrl) {
         var itemElement = element.closest('[reorderable]');
         var item = itemElement.scope()[ReorderableCtrl.valueIdentifier];
+        var isDragging;
 
         var startX = 0, startY = 0, elementX = 0, elementY = 0;
 
@@ -92,9 +93,18 @@ angular
           position: 'relative'
         });
 
+        element.on('click', function (event) {
+          if (isDragging) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            return false;
+          }
+        });
+
         element.on('mousedown', function (event) {
           // Prevent default dragging of selected content
           event.preventDefault();
+          isDragging = false;
 
           // Put element on foreground.
           itemElement.css({ zIndex: 10 });
@@ -113,7 +123,11 @@ angular
         /**
          * Mouse move handler
          */
+
         function mousemove(event) {
+          // Once we started dragging element, prevent click to being fired.
+          isDragging = true;
+
           // Get the collection's element under mouse position.
           var hoverItem = getItemFromPoint(event.clientX, event.clientY);
 
