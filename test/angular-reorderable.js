@@ -223,5 +223,41 @@ describe('angular reorderable', function () {
 
       expect(scope.clickSpy).to.not.have.been.called;
     }));
+
+    it('should emit reorderEnd event when mouseup', inject(function($document) {
+      template =
+        '<ul>' +
+        '  <li' +
+        '   ng-repeat="item in collection"' +
+        '   reorderable="rank"' +
+        '   reorderable-handle' +
+        '   ng-bind="item.name"></li>' +
+        '</ul>';
+      var element = createElement();
+      var reorderEndEvent = sinon.spy();
+
+      scope.$on("reorderEnd", reorderEndEvent);
+
+      var dragElement = element.find('[reorderable-handle]:eq(0)');
+
+      // Click first element.
+      dragElement.trigger(jQuery.Event('mousedown', {
+        clientX: dragElement.get(0).getBoundingClientRect().left,
+        clientY: dragElement.get(0).getBoundingClientRect().top
+      }));
+
+      // Move mouse to third element.
+      $document.trigger(jQuery.Event('mousemove', {
+        clientX: dragElement.get(0).getBoundingClientRect().left + 10,
+        clientY: dragElement.get(0).getBoundingClientRect().top + 10
+      }));
+
+      expect(reorderEndEvent).to.not.have.been.called;
+
+      // Release mouse button (not really needed, but whatever).
+      $document.trigger('mouseup');
+
+      expect(reorderEndEvent).to.have.been.called.once;
+    }));
   });
 });

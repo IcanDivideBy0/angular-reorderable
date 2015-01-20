@@ -38,6 +38,10 @@ angular
 
       $scope.$digest();
     };
+
+    this.emit = function(event) {
+      $scope.$emit(event);
+    }
   }
 ])
 .directive('reorderable', [
@@ -158,6 +162,8 @@ angular
         function mouseup() {
           $document.off('mousemove', mousemove);
           $document.off('mouseup', mouseup);
+
+          ReorderableCtrl.emit('reorderEnd')
 
           itemElement.css({
             top: '',
