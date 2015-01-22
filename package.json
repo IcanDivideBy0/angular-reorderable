@@ -1,6 +1,6 @@
 {
   "name": "angular-reorderable",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Re-order your collection over ng-repeat",
   "scripts": {
     "test": "./node_modules/.bin/gulp test",
