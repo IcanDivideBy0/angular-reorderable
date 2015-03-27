@@ -106,6 +106,8 @@ angular
         });
 
         element.on('mousedown', function (event) {
+          if (itemElement.attr('readonly')) return;
+
           // Prevent default dragging of selected content
           event.preventDefault();
           isDragging = false;
