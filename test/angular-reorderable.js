@@ -146,6 +146,48 @@ describe('angular reorderable', function () {
       expect(element.find('[reorderable]')).to.have.css('position', 'relative');
     });
 
+    it('should do nothing if readOnly is set to true', inject(function ($document) {
+      template =
+        '<ul>' +
+        '  <li' +
+        '   ng-repeat="item in collection"' +
+        '   reorderable="rank"' +
+        '   reorderable-handle' +
+        '   ng-readonly="true"' +
+        '   ng-bind="item.name"></li>' +
+        '</ul>';
+      var element = createElement();
+
+      var dragElement = element.find('[reorderable-handle]:eq(0)');
+      var dropElement = element.find('[reorderable]:eq(2)');
+
+      // Click first element.
+      dragElement.trigger(jQuery.Event('mousedown', {
+        clientX: dragElement.get(0).getBoundingClientRect().left,
+        clientY: dragElement.get(0).getBoundingClientRect().top
+      }));
+
+      // Move mouse to third element.
+      $document.trigger(jQuery.Event('mousemove', {
+        clientX: dropElement.get(0).getBoundingClientRect().left,
+        clientY: dropElement.get(0).getBoundingClientRect().top
+      }));
+      scope.$digest();
+
+      // Release mouse button (not really needed, but whatever).
+      $document.trigger('mouseup');
+
+      expect(element.find('[reorderable]:eq(0)')).to.have.text('Qux');
+      expect(element.find('[reorderable]:eq(1)')).to.have.text('Baz');
+      expect(element.find('[reorderable]:eq(2)')).to.have.text('Bar');
+      expect(element.find('[reorderable]:eq(3)')).to.have.text('Foo');
+
+      expect(scope.collection[0].name).eql('Qux');
+      expect(scope.collection[1].name).eql('Baz');
+      expect(scope.collection[2].name).eql('Bar');
+      expect(scope.collection[3].name).eql('Foo');
+    }));
+
     it('should allow to move item forward', inject(function ($document) {
       template =
         '<ul>' +
